@@ -1,14 +1,14 @@
-public class main {
+public class Main {
     public static void main(String[] args) {
         // Test the leftPad method
         System.out.println(leftPad("Hello, world!", 30, ' '));
         System.out.println(leftPad("Welcome to CAB302!", 30, ' '));
         System.out.println(leftPad("This is our first project!", 30, ' '));
-        System.out.println("Alice likes rectangles!");
+        printBox("Alice likes rectangles!");
         for (int i = 0; i < 5; i++) {
             System.out.println("*****************");
         }
-        System.out.println("Bob likes triangles!");
+        printBox("Bob likes triangles!");
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < (4 - i) * 2; j++) {
                 System.out.print(" ");
@@ -60,5 +60,34 @@ public class main {
         }
         // Pad `str`!
         return pad.toString() + str;
+    }
+
+    /**
+     * Print a string with a box around it, using the box-drawing characters.
+     * @param str the string to be printed
+     */
+    public static void printBox(String str) {
+        int len = str.length() + 4;
+        for (int i = 0; i < len; i++) {
+            if (i == 0) {
+                System.out.print("╔");
+            } else if (i == len - 1) {
+                System.out.print("╗");
+            } else {
+                System.out.print("═");
+            }
+        }
+        System.out.println();
+        System.out.println("║ " + str + " ║");
+        for (int i = 0; i < len; i++) {
+            if (i == 0) {
+                System.out.print("╚");
+            } else if (i == len - 1) {
+                System.out.print("╝");
+            } else {
+                System.out.print("═");
+            }
+        }
+        System.out.println();
     }
 }
