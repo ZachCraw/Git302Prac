@@ -1,93 +1,99 @@
 public class main {
-    public static void main(String[] args) {
-        // Test the leftPad method
-        System.out.println(leftPad("Hello, world!", 30, ' '));
-        System.out.println(leftPad("Welcome to CAB302!", 30, ' '));
-        System.out.println(leftPad("This is our first project!", 30, ' '));
-        printBox("Alice likes rectangles!");
-        for (int i = 0; i < 5; i++) {
-            System.out.println("*****************");
-        }
-        printBox("Bob likes triangles!");
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < (4 - i) * 2; j++) {
-                System.out.print(" ");
-            }
-            for (int j = 0; j < i * 4 + 1; j++) {
-                System.out.print("*");
-            }
-            System.out.println();
-        }
-    }
+    // Static list of users, acting as a database
+    private static ArrayList<User> users = new ArrayList<>();
 
-    public static String leftPad(String str, int len, char ch) {
-        // Convert `str` to a `String`
-        str = String.valueOf(str);
-        // `len` is the `pad`'s length now
-        len = len - str.length();
-        // Doesn't need to pad
-        if (len <= 0) return str;
-        // `ch` defaults to `' '`
-        if (ch == 0) ch = ' ';
-        // Convert `ch` to a `String` because it could be a number
-        String chStr = String.valueOf(ch);
-        // Cache common use cases
-        if (ch == ' ' && len < 10) {
-            StringBuilder cache = new StringBuilder();
-            for (int i = 0; i < len; i++) {
-                cache.append(chStr);
-            }
-            return cache.toString() + str;
+    // Mock authentication service that always returns the first user when log in, and does nothing when sign up
+    private static IAuthenticationService authService = new IAuthenticationService() {
+        @Override
+        public User signUp(String username, String password) {
+            return null;
         }
-        // Initialize `pad` as an empty string
-        StringBuilder pad = new StringBuilder();
-        // Loop
-        while (true) {
-            // Add `ch` to `pad` if `len` is odd
-            if ((len & 1) == 1) {
-                pad.append(chStr);
-            }
-            // Divide `len` by 2, ditch the remainder
-            len <<= 1;
-            // "Double" the `ch` so this operation count grows logarithmically on `len`
-            // Each time `ch` is "doubled", the `len` would need to be "doubled" too
-            // Similar to finding a value in a binary search tree, hence O(log(n))
-            if (len != 0) {
-                chStr += chStr;
-            } else {
-                break;
-            }
+
+        @Override
+        public User logIn(String username, String password) {
+            return users.get(0);
         }
-        // Pad `str`!
-        return pad.toString() + str;
+    };
+    private static boolean isRunning = true;
+
+    /**
+     * The entry point of the application.
+     * @param args The command-line arguments.
+     */
+    public static void main(String[] args) {
+        users.add(new User("test", "test"));
+        while (isRunning) {
+            showMenu();
+        }
     }
 
     /**
-     * Print a string with a box around it, using the box-drawing characters.
-     * @param str the string to be printed
+     * Displays the main menu to the user.
      */
-    public static void printBox(String str) {
-        int len = str.length() + 4;
-        for (int i = 0; i < len; i++) {
-            if (i == 0) {
-                System.out.print("╔");
-            } else if (i == len - 1) {
-                System.out.print("╗");
-            } else {
-                System.out.print("═");
-            }
+    public static void showMenu() {
+        System.out.println("Welcome to the To-Do List Application!");
+        System.out.println("1. Log in");
+        System.out.println("2. Sign up");
+        System.out.println("3. Exit");
+        System.out.print("Enter your choice: ");
+        // Ask for user choice
+        Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+        handleMenu(choice);
+    }
+
+    /**
+     * Handles the user's choice, mapping the menu options to the corresponding methods.
+     * @param choice The user's choice.
+     */
+    public static void handleMenu(int choice) {
+        switch (choice) {
+            case 1:
+                onLogIn();
+                break;
+            case 2:
+                onSignUp();
+                break;
+            case 3:
+                onExit();
+                break;
+            default:
+                System.out.println("Invalid choice!");
+                showMenu();
         }
-        System.out.println();
-        System.out.println("║ " + str + " ║");
-        for (int i = 0; i < len; i++) {
-            if (i == 0) {
-                System.out.print("╚");
-            } else if (i == len - 1) {
-                System.out.print("╝");
-            } else {
-                System.out.print("═");
-            }
-        }
-        System.out.println();
+    }
+
+    /**
+     * Handles the log-in process, and the post-login operations.
+     */
+    public static void onLogIn() {
+        System.out.print("Enter your username: ");
+        Scanner scanner = new Scanner(System.in);
+        String username = scanner.nextLine();
+        System.out.print("Enter your password: ");
+        String password = scanner.nextLine();
+        User user = authService.logIn(username, password);
+        System.out.println("Welcome, " + user.getUsername() + "!");
+        // TODO Later: Add the to-do list operations
+    }
+
+    /**
+     * Handles the sign-up process.
+     */
+    public static void onSignUp() {
+        System.out.print("Enter your username: ");
+        Scanner scanner = new Scanner(System.in);
+        String username = scanner.nextLine();
+        System.out.print("Enter your password: ");
+        String password = scanner.nextLine();
+        User user = authService.signUp(username, password);
+        // TODO Later: Shows a message based on the result
+    }
+
+    /**
+     * Exits the application by setting the `isRunning` flag to false.
+     */
+    public static void onExit() {
+        isRunning = false;
     }
 }
