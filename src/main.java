@@ -1,4 +1,4 @@
-public class Main {
+public class main {
     public static void main(String[] args) {
         // Test the leftPad method
         System.out.println(leftPad("Hello, world!", 30, ' '));
